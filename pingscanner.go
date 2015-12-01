@@ -37,6 +37,7 @@ package pingscanner
 import (
 	"net"
 	"os/exec"
+	"sort"
 )
 
 // PingScanner has information of Scanning.
@@ -80,6 +81,7 @@ func (d PingScanner) Scan() (aliveIPs []string, err error) {
 	for _, a := range alives {
 		aliveIPs = append(aliveIPs, a.IP)
 	}
+	sort.Strings(aliveIPs)
 	return
 }
 
