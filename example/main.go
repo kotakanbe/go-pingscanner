@@ -8,7 +8,8 @@ import (
 
 func main() {
 	scanner := ps.PingScanner{
-		CIDR: "192.168.11.0/24",
+		//  CIDR: "192.168.11.0/24",
+		CIDR: "192.168.11.2/32",
 		PingOptions: []string{
 			"-c1",
 			"-t1",

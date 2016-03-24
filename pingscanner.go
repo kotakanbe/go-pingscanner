@@ -38,6 +38,7 @@ import (
 	"net"
 	"os/exec"
 	"sort"
+	"strings"
 )
 
 // PingScanner has information of Scanning.
@@ -86,6 +87,10 @@ func (d PingScanner) Scan() (aliveIPs []string, err error) {
 }
 
 func expandCidrIntoIPs(cidr string) ([]string, error) {
+	splitted := strings.Split(cidr, "/")
+	if splitted[1] == "32" {
+		return []string{splitted[0]}, nil
+	}
 	ip, ipnet, err := net.ParseCIDR(cidr)
 	if err != nil {
 		return nil, err
