@@ -41,4 +41,4 @@ func main() {
 
 ## License
 
-MIT: http://kotakanbe.mit-license.org/2015
+Please see [LICENSE](https://github.com/kotakanbe/go-pingscanner/blob/master/LICENSE).
