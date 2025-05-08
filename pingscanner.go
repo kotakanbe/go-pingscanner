@@ -6,37 +6,40 @@ Example usage:
 package main
 
 import (
+
 	"fmt"
 
 	ps "github.com/kotakanbe/go-pingscanner"
+
 )
 
-func main() {
-	scanner := ps.PingScanner{
-		CIDR: "192.168.11.0/24",
-		PingOptions: []string{
-			"-c1",
-			"-t1",
-		},
-		NumOfConcurrency: 100,
-	}
-	if aliveIPs, err := scanner.Scan(); err != nil {
-		fmt.Println(err)
-	} else {
-		if len(aliveIPs) < 1 {
-			fmt.Println("no alive hosts")
+	func main() {
+		scanner := ps.PingScanner{
+			CIDR: "192.168.11.0/24",
+			PingOptions: []string{
+				"-c1",
+				"-t1",
+			},
+			NumOfConcurrency: 100,
 		}
-		for _, ip := range aliveIPs {
-			fmt.Println(ip)
+		if aliveIPs, err := scanner.Scan(); err != nil {
+			fmt.Println(err)
+		} else {
+			if len(aliveIPs) < 1 {
+				fmt.Println("no alive hosts")
+			}
+			for _, ip := range aliveIPs {
+				fmt.Println(ip)
+			}
 		}
 	}
-}
 */
 package pingscanner
 
 import (
 	"net"
 	"os/exec"
+	"slices"
 	"sort"
 	"strings"
 )
@@ -104,7 +107,7 @@ func expandCidrIntoIPs(cidr string) ([]string, error) {
 	return ips[1 : len(ips)-1], nil
 }
 
-//  http://play.golang.org/p/m8TNTtygK0
+// http://play.golang.org/p/m8TNTtygK0
 func inc(ip net.IP) {
 	for j := len(ip) - 1; j >= 0; j-- {
 		ip[j]++
@@ -116,8 +119,7 @@ func inc(ip net.IP) {
 
 func ping(pingChan <-chan string, pongChan chan<- pong, pingOptions ...string) {
 	for ip := range pingChan {
-		pingOptions = append(pingOptions, ip)
-		_, err := exec.Command("ping", pingOptions...).Output()
+		_, err := exec.Command("ping", append(slices.Clone(pingOptions), ip)...).Output()
 		var alive bool
 		if err != nil {
 			alive = false
